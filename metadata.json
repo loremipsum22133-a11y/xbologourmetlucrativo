@@ -1,0 +1,6 @@
+{
+  "name": "Bolo Burger Gourmet",
+  "description": "Página de vendas premium para o curso X-Bolo Burger Gourmet focado em renda extra com confeitaria criativa.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

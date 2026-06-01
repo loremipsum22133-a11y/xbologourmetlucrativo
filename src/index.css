@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Gotham", "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Gotham", "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Gotham", "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  
+  /* Primary color theme custom palettes for seamless culinary branding */
+  --color-brand-brown: #4E2A1E;
+  --color-brand-brown-light: #6E3F30;
+  --color-brand-yellow: #F4C95D;
+  --color-brand-yellow-light: #FBECC4;
+  --color-brand-beige: #F5F1EA;
+  --color-brand-beige-dark: #E9E1D3;
+}
+
+/* Custom minimal scrollbar to keep layout premium */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: #F5F1EA;
+}
+::-webkit-scrollbar-thumb {
+  background: #4E2A1E;
+  border-radius: 9999px;
+}
+
+/* Custom keyframes for heartbeats and subtle slides */
+@keyframes soft-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+.animate-soft-pulse {
+  animation: soft-pulse 5s infinite ease-in-out;
+}
+
+@keyframes marquee-left {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes marquee-right {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+.animate-marquee-left {
+  display: flex;
+  width: max-content;
+  animation: marquee-left 25s linear infinite;
+}
+
+.animate-marquee-right {
+  display: flex;
+  width: max-content;
+  animation: marquee-right 25s linear infinite;
+}
+

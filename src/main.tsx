@@ -4,11 +4,13 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import App from './App.tsx';
 import { Login } from './areademembros/Login.tsx';
 import { Dashboard } from './areademembros/Dashboard.tsx';
+import MetaPixel from './components/MetaPixel.tsx';
 import './index.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
+      <MetaPixel />
       <Routes>
         {/* Landing page */}
         <Route path="/" element={<App />} />

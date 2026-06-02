@@ -54,15 +54,38 @@ export const Login: React.FC = () => {
     }
 
     setLoading(true);
-    setTimeout(() => {
-      if (password === VALID_PASSWORD) {
-        localStorage.setItem(AUTH_KEY, email.trim().toLowerCase());
+    
+    const anonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsZXpqamJ3eHFzZ3V4aHZrZG1qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAzNTQ0NTksImV4cCI6MjA5NTkzMDQ1OX0.MZSO0GoZ1Smf0trN64eB7uJ8HuTs9n0dElPOTYCGpFM';
+    const supabaseUrl = 'https://vlezjjbwxqsguxhvkdmj.supabase.co';
+    
+    fetch(`${supabaseUrl}/rest/v1/members?email=eq.${encodeURIComponent(email.trim().toLowerCase())}&password=eq.${encodeURIComponent(password.trim())}&select=*`, {
+      method: 'GET',
+      headers: {
+        'apikey': anonKey,
+        'Authorization': `Bearer ${anonKey}`,
+        'Accept': 'application/json'
+      }
+    })
+    .then(response => {
+      if (!response.ok) throw new Error('Falha na comunicação com o banco de dados.');
+      return response.json();
+    })
+    .then(data => {
+      if (data && data.length > 0) {
+        const member = data[0];
+        localStorage.setItem(AUTH_KEY, member.email);
+        localStorage.setItem('xbolo_user_name', member.name);
         navigate('/dashboard', { replace: true });
       } else {
-        setError('Senha incorreta. Verifique seus dados e tente novamente.');
+        setError('E-mail ou senha incorretos. Verifique suas credenciais recebidas por e-mail.');
         setLoading(false);
       }
-    }, 800);
+    })
+    .catch(err => {
+      console.error(err);
+      setError('Erro ao conectar: Verifique sua conexão ou tente novamente mais tarde.');
+      setLoading(false);
+    });
   };
 
   return (

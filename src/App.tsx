@@ -234,11 +234,25 @@ export default function App() {
   const CHECKOUT_URL = "https://pay.wiapy.com/BYKMdOphnB";
 
   const handleCheckoutRedirect = () => {
+    if (window.fbq) {
+      window.fbq('track', 'InitiateCheckout', {
+        content_name: 'X-Bolo Gourmet Lucrativo',
+        currency: 'BRL',
+        value: 97.00
+      });
+    }
     window.location.href = CHECKOUT_URL;
   };
 
   // Safe navigation links scroll down to the Pricing/Offer card
   const scrollToOffer = () => {
+    if (window.fbq) {
+      window.fbq('track', 'InitiateCheckout', {
+        content_name: 'X-Bolo Gourmet Lucrativo',
+        currency: 'BRL',
+        value: 97.00
+      });
+    }
     const section = document.getElementById("oferta-principal");
     if (section) {
       section.scrollIntoView({ behavior: "smooth" });
@@ -294,8 +308,12 @@ export default function App() {
             O doce que está chamando atenção de todo mundo
           </h2>
 
-          <p className="text-sm text-brand-brown/80 leading-relaxed font-light px-3">
-            O primeiro método passo a passo que ensina você a faturar até <strong className="font-semibold text-brand-brown">R$ 5.000,00 por mês</strong> vendendo X-Bolo Gourmet absurdamente recheados na sua própria casa.
+          <p className="text-base text-brand-brown/80 leading-relaxed font-light px-0 max-w-[310px] mx-auto">
+            O método passo a passo para faturar até{' '}
+            <strong className="inline-block align-middle text-[1.25rem] font-black text-brand-yellow bg-brand-brown border border-brand-yellow/30 px-3 py-1 mx-0.5 my-0.5 rounded-full leading-none whitespace-nowrap shadow-[0_4px_12px_rgba(78,42,30,0.15)]">
+              R$ 5.000,00 por mês
+            </strong>{' '}
+            com X-Bolo Gourmet na sua própria casa.
           </p>
 
           {/* Vertical Video (VSL Section) styled for mobile TikTok/Reels feed - 9:16 aspect ratio */}

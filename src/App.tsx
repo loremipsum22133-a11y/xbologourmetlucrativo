@@ -44,10 +44,39 @@ import {
 export default function App() {
   // --- VSL State Machine ---
   const [vslPlaying, setVslPlaying] = useState<boolean>(true);
-  const [vslMuted, setVslMuted] = useState<boolean>(false);
-  const [vslProgress, setVslProgress] = useState<number>(12); // start slightly inside
-  const [subtitleIndex, setSubtitleIndex] = useState<number>(0);
-  const videoIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [vslMuted, setVslMuted] = useState<boolean>(true); // starts muted as requested
+  const [vslProgress, setVslProgress] = useState<number>(0);
+  const [vslDuration, setVslDuration] = useState<number>(0);
+  const [vslCurrentTime, setVslCurrentTime] = useState<number>(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  // Sync video play/pause with React state
+  useEffect(() => {
+    if (videoRef.current) {
+      if (vslPlaying) {
+        videoRef.current.play().catch((err) => {
+          console.log("Autoplay blocked by browser. Starting paused/muted.", err);
+          setVslPlaying(false);
+        });
+      } else {
+        videoRef.current.pause();
+      }
+    }
+  }, [vslPlaying]);
+
+  // Sync mute state
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.muted = vslMuted;
+    }
+  }, [vslMuted]);
+
+  const formatVideoTime = (seconds: number) => {
+    if (isNaN(seconds)) return "0:00";
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
+  };
 
   // --- Slideshow for Members Area Mockup ---
   const [activeDemoIdx, setActiveDemoIdx] = useState<number>(0);
@@ -64,43 +93,6 @@ export default function App() {
     }, 3000);
     return () => clearInterval(interval);
   }, []);
-
-  const subtitles = [
-    "Atenção confeiteira! Olha só a nova sensação do mercado... 🧁",
-    "Parece um hambúrguer gourmet salgado e suculento, né? 🍔",
-    "Mas na verdade é um bolo artesanal 100% doce e trufado!",
-    "Massa leve de cacau black com brigadeiro gourmet cremoso...",
-    "E morangos frescos picados imitando rodelas de tomate! 🍓",
-    "O custo para produzir cada um é de apenas R$ 15,00...",
-    "E você vende facilmente por R$ 60,00 ou mais por unidade!",
-    "Isso mesmo: são R$ 45,00 de lucro líquido em cada venda! 💰",
-    "Eles esgotam super rápido pelo WhatsApp e são campeões de fotos.",
-    "Clique no botão amarelo abaixo para faturar com esse método hoje! 🚀"
-  ];
-
-  // Simulated live VSL timeline update
-  useEffect(() => {
-    if (vslPlaying) {
-      videoIntervalRef.current = setInterval(() => {
-        setVslProgress((prev) => {
-          const next = prev + 0.8;
-          if (next >= 100) {
-            setSubtitleIndex(0);
-            return 0; // loops
-          }
-          // Subtitle indexes based on completion percentage
-          const index = Math.floor((next / 100) * subtitles.length);
-          setSubtitleIndex(index);
-          return next;
-        });
-      }, 150);
-    } else {
-      if (videoIntervalRef.current) clearInterval(videoIntervalRef.current);
-    }
-    return () => {
-      if (videoIntervalRef.current) clearInterval(videoIntervalRef.current);
-    };
-  }, [vslPlaying]);
 
   // --- Countdown Timer for Hero Section Banner ---
   const [timeLeft, setTimeLeft] = useState<{ minutes: number; seconds: number }>({ minutes: 14, seconds: 59 });
@@ -297,9 +289,9 @@ export default function App() {
 
         {/* 1. HERO SECTION (TOPO) */}
         <section className="px-5 pt-8 pb-10 bg-[#F5F1EA] text-center space-y-6">
-          <div className="inline-flex items-center space-x-1 bg-brand-brown/5 border border-brand-brown/15 rounded-full px-3 py-1 whitespace-nowrap">
-            <Sparkles className="w-3 h-3 text-brand-yellow" />
-            <span className="text-[10px] font-medium tracking-wide font-mono uppercase text-brand-brown/80">
+          <div className="inline-flex items-center space-x-1.5 bg-brand-brown/10 border border-brand-brown/25 rounded-full px-4 py-1.5 whitespace-nowrap">
+            <Sparkles className="w-3.5 h-3.5 text-brand-yellow shrink-0 fill-brand-yellow/20" />
+            <span className="text-xs font-mono font-bold tracking-wider uppercase text-brand-brown">
               Chegou o Novo Produto da Confeitaria
             </span>
           </div>
@@ -308,67 +300,120 @@ export default function App() {
             O doce que está chamando atenção de todo mundo
           </h2>
 
-          <p className="text-base text-brand-brown/80 leading-relaxed font-light px-0 max-w-[310px] mx-auto">
-            O método passo a passo para faturar até{' '}
-            <strong className="inline-block align-middle text-[1.25rem] font-black text-brand-yellow bg-brand-brown border border-brand-yellow/30 px-3 py-1 mx-0.5 my-0.5 rounded-full leading-none whitespace-nowrap shadow-[0_4px_12px_rgba(78,42,30,0.15)]">
-              R$ 5.000,00 por mês
-            </strong>{' '}
+          <p className="text-base text-brand-brown/80 leading-relaxed font-light px-4 max-w-[380px] mx-auto">
+            O método passo a passo para{' '}
+            <span className="whitespace-nowrap">
+              faturar até{' '}
+              <strong className="inline-block align-middle text-[1.25rem] font-black text-brand-yellow bg-brand-brown border border-brand-yellow/30 px-3 py-1 mx-0.5 my-0.5 rounded-full leading-none whitespace-nowrap shadow-[0_4px_12px_rgba(78,42,30,0.15)]">
+                R$ 5.000,00 por mês
+              </strong>
+            </span>{' '}
             com X-Bolo Gourmet na sua própria casa.
           </p>
 
-          {/* Vertical Video (VSL Section) styled for mobile TikTok/Reels feed - 9:16 aspect ratio */}
-          <div className="relative mx-auto w-full max-w-[280px] aspect-[9/16] bg-brand-brown rounded-3xl overflow-hidden shadow-lg border-2 border-brand-brown/10">
-            {/* Playable backdrop mockup using high quality cake burger elements */}
-            <div className="absolute inset-0 bg-cover bg-center transition-all duration-700" style={{ backgroundImage: `url('https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&q=80&w=400&h=700')` }}>
-              {/* Dark overlay for cinema immersion */}
-              <div className="absolute inset-0 bg-stone-950/45 mix-blend-multiply"></div>
-            </div>
+          {/* Real Video Sales Letter (VSL) Section inside a Premium mockup frame */}
+          <div className="relative mx-auto w-full max-w-[280px] aspect-[9/16] bg-stone-950 rounded-[32px] overflow-hidden shadow-[0_16px_40px_rgba(78,42,30,0.25)] border-[4px] border-brand-brown/15">
+            {/* Real HTML5 Video element */}
+            <video
+              ref={videoRef}
+              src="https://pub-a772dcccd942498d933354c58ab4ce29.r2.dev/vsl.mp4"
+              playsInline
+              autoPlay
+              muted={vslMuted}
+              className="w-full h-full object-cover cursor-pointer"
+              onTimeUpdate={() => {
+                if (videoRef.current) {
+                  const current = videoRef.current.currentTime;
+                  const duration = videoRef.current.duration || 1;
+                  setVslCurrentTime(current);
+                  setVslProgress((current / duration) * 100);
+                }
+              }}
+              onLoadedMetadata={() => {
+                if (videoRef.current) {
+                  setVslDuration(videoRef.current.duration);
+                }
+              }}
+              onClick={() => {
+                if (vslMuted) {
+                  setVslMuted(false);
+                  setVslPlaying(true);
+                } else {
+                  if (vslPlaying) {
+                    setVslPlaying(false);
+                  } else {
+                    if (videoRef.current) {
+                      videoRef.current.currentTime = 0; // restarts from the beginning on unpause
+                    }
+                    setVslPlaying(true);
+                  }
+                }
+              }}
+            />
 
             {/* Pulsing Visual Live Element inside Video */}
-            <div className="absolute top-3.5 left-3.5 flex items-center space-x-2 z-10">
+            <div className="absolute top-3.5 left-3.5 flex items-center space-x-2 z-10 pointer-events-none select-none">
               <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-              <span className="text-[10px] font-mono font-medium tracking-widest text-white/90 bg-black/40 px-1.5 py-0.5 rounded uppercase">
-                EM ALTA 🚀
+              <span className="text-[9px] font-mono font-bold tracking-widest text-white bg-red-600/90 px-1.5 py-0.5 rounded shadow">
+                AO VIVO 🔴
               </span>
             </div>
 
-            {/* Video Subtitle Overlay - Interactive */}
-            <div className="absolute bottom-16 inset-x-3 text-center z-10">
-              <div className="bg-black/75 backdrop-blur-sm text-xs text-white px-2.5 py-3 rounded-xl leading-relaxed text-center font-light border border-white/10 shadow-lg min-h-[64px] flex items-center justify-center">
-                <p className="text-[11px] leading-relaxed">
-                  {subtitles[subtitleIndex]}
-                </p>
+            {/* Premium Gold Flashing Unmute Warning (Click to Unmute) */}
+            {vslMuted && (
+              <div 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setVslMuted(false);
+                  setVslPlaying(true);
+                }}
+                className="absolute top-12 inset-x-3 bg-brand-yellow hover:bg-brand-yellow/95 text-brand-brown font-bold text-[10px] uppercase px-2 py-2.5 rounded-xl shadow-[0_8px_20px_rgba(244,201,93,0.45)] border border-brand-brown/10 flex items-center justify-center space-x-1.5 animate-bounce cursor-pointer z-30 pointer-events-auto"
+              >
+                <VolumeX className="w-3.5 h-3.5 animate-pulse shrink-0 text-brand-brown" />
+                <span className="tracking-wide text-center">CLIQUE PARA ATIVAR O SOM! 🔊</span>
               </div>
-            </div>
+            )}
 
             {/* Video Bottom Player Controls */}
-            <div className="absolute bottom-0 inset-x-0 p-3 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col space-y-2 z-10">
-              {/* Progress bar */}
-              <div className="h-1 bg-white/20 rounded-full overflow-hidden w-full">
+            <div className="absolute bottom-0 inset-x-0 p-3 bg-gradient-to-t from-black/90 via-black/40 to-transparent flex flex-col space-y-2 z-20 pointer-events-auto">
+              {/* Visual-only Progress Bar (Direct-Response VSL pattern: hides scrubbing to increase watch times) */}
+              <div className="h-1 bg-white/20 rounded-full overflow-hidden w-full select-none">
                 <div 
-                  className="h-full bg-brand-yellow transition-all duration-150 ease-linear"
+                  className="h-full bg-brand-yellow transition-all duration-75 ease-linear"
                   style={{ width: `${vslProgress}%` }}
                 ></div>
               </div>
 
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
+                  {/* Play/Pause Button */}
                   <button 
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (!vslPlaying) {
+                        if (videoRef.current) {
+                          videoRef.current.currentTime = 0; // restarts from the beginning on unpause
+                        }
+                      }
                       setVslPlaying(!vslPlaying);
                     }}
-                    className="w-7 h-7 rounded-full bg-white/20 hover:bg-white/35 active:scale-90 transition-all flex items-center justify-center text-white"
+                    className="w-7 h-7 rounded-full bg-white/25 hover:bg-white/40 active:scale-90 transition-all flex items-center justify-center text-white cursor-pointer"
                   >
                     {vslPlaying ? <Pause className="w-3.5 h-3.5 fill-white" /> : <Play className="w-3.5 h-3.5 fill-white ml-0.5" />}
                   </button>
-                  <span className="text-[10px] text-white/80 font-mono">
-                    {Math.floor((vslProgress/100) * 95) < 10 ? `0:0${Math.floor((vslProgress/100) * 95)}` : `0:${Math.floor((vslProgress/100) * 95)}`} / 1:35
+                  {/* Time Counter */}
+                  <span className="text-[10px] text-white/80 font-mono select-none">
+                    {formatVideoTime(vslCurrentTime)} / {formatVideoTime(vslDuration)}
                   </span>
                 </div>
 
+                {/* Mute/Unmute Button */}
                 <button 
-                  onClick={() => setVslMuted(!vslMuted)}
-                  className="w-7 h-7 rounded-full bg-white/20 hover:bg-white/35 flex items-center justify-center text-white"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setVslMuted(!vslMuted);
+                  }}
+                  className="w-7 h-7 rounded-full bg-white/25 hover:bg-white/40 active:scale-90 transition-all flex items-center justify-center text-white cursor-pointer"
                 >
                   {vslMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
                 </button>
@@ -378,18 +423,41 @@ export default function App() {
             {/* Splash Overlay when paused */}
             {!vslPlaying && (
               <div 
-                onClick={() => setVslPlaying(true)}
-                className="absolute inset-x-0 inset-y-0 bg-black/60 flex flex-col items-center justify-center space-y-2 cursor-pointer z-20"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (videoRef.current) {
+                    videoRef.current.currentTime = 0; // restarts from the beginning on unpause
+                  }
+                  setVslPlaying(true);
+                }}
+                className="absolute inset-0 bg-stone-950/80 backdrop-blur-[4px] flex flex-col items-center justify-center space-y-4 cursor-pointer z-30 pointer-events-auto transition-all duration-300"
               >
-                <div className="w-14 h-14 rounded-full bg-brand-yellow flex items-center justify-center text-brand-brown shadow-xl scale-110 active:scale-95 transition-all">
-                  <Play className="w-6 h-6 fill-brand-brown ml-1" />
+                {/* Glowing & Pulsing Play Button mockup */}
+                <div className="relative w-16 h-16 flex items-center justify-center">
+                  <span className="absolute inset-0 rounded-full bg-brand-yellow/25 animate-ping duration-1000"></span>
+                  <span className="absolute -inset-1 rounded-full bg-brand-yellow/15 animate-pulse"></span>
+                  <div className="relative z-10 w-16 h-16 rounded-full bg-brand-yellow hover:bg-brand-yellow/95 flex items-center justify-center text-brand-brown shadow-[0_0_35px_rgba(244,201,93,0.65)] hover:scale-105 active:scale-95 transition-all duration-300">
+                    <Play className="w-7 h-7 fill-brand-brown ml-1 transition-transform group-hover:scale-110" />
+                  </div>
                 </div>
-                <span className="text-white text-xs font-mono font-bold uppercase tracking-widest bg-brand-brown/40 px-2.5 py-1 rounded">
-                  RETOMAR VÍDEO
-                </span>
-                <span className="text-xs text-white/70 italic px-4 text-center leading-snug">
-                  Assista ao faturamento real em tempo recorde
-                </span>
+
+                {/* Text and Badges */}
+                <div className="flex flex-col items-center space-y-1 px-4 text-center select-none">
+                  <span className="text-[9px] font-mono font-black uppercase tracking-[0.2em] text-brand-yellow bg-brand-brown/70 px-3 py-1 rounded-full border border-brand-yellow/30 shadow-sm">
+                    Vídeo Interrompido
+                  </span>
+                  <h4 className="text-white font-serif font-black text-sm tracking-wide mt-1">
+                    Como Faturar R$ 5.000/Mês
+                  </h4>
+                  <p className="text-white/70 text-[10px] max-w-[200px] leading-relaxed font-light font-sans">
+                    Clique para continuar assistindo e descobrir o segredo dos bolos trufados
+                  </p>
+                </div>
+
+                {/* Sleek CTA Button */}
+                <div className="bg-brand-yellow hover:bg-brand-yellow/95 text-brand-brown font-sans font-black text-xs uppercase px-5 py-2.5 rounded-full shadow-[0_6px_20px_rgba(244,201,93,0.4)] tracking-wider active:scale-95 transition-all border border-brand-brown/15">
+                  CONTINUAR APRESENTAÇÃO
+                </div>
               </div>
             )}
           </div>

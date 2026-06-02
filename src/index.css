@@ -1,10 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Gotham", "Montserrat", ui-sans-serif, system-ui, sans-serif;
-  --font-serif: "Gotham", "Montserrat", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "Gotham", "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Poppins", ui-sans-serif, system-ui, sans-serif;
   
   /* Primary color theme custom palettes for seamless culinary branding */
   --color-brand-brown: #4E2A1E;
@@ -57,5 +57,31 @@
   display: flex;
   width: max-content;
   animation: marquee-right 25s linear infinite;
+}
+
+/* Global legibility overrides for all light text weights across the site */
+.font-light {
+  font-weight: 400 !important; /* Poppins Regular (400) - perfectly readable, thinner than bold (700) */
+}
+
+/* Increase font size of thin text blocks by exactly 2px globally */
+.text-xs.font-light {
+  font-size: 0.875rem !important; /* 12px -> 14px */
+}
+
+.text-sm.font-light {
+  font-size: 1rem !important; /* 14px -> 16px */
+}
+
+.text-base.font-light {
+  font-size: 1.125rem !important; /* 16px -> 18px */
+}
+
+.text-\[10px\]\.font-light {
+  font-size: 12px !important; /* 10px -> 12px */
+}
+
+.text-\[11px\]\.font-light {
+  font-size: 13px !important; /* 11px -> 13px */
 }
 

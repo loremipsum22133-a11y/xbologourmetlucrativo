@@ -20,6 +20,28 @@ Deno.serve(async (req) => {
     const body = await req.json().catch(() => ({}));
     console.log("Webhook payload received:", JSON.stringify(body, null, 2));
 
+    // Extract status and verify if it's paid
+    const paymentStatus = (
+      body.payment?.status || 
+      body.status || 
+      body.data?.status || 
+      ""
+    ).trim().toLowerCase();
+
+    if (paymentStatus && paymentStatus !== "paid" && paymentStatus !== "approved" && paymentStatus !== "completed") {
+      console.log(`Payment status is '${paymentStatus}'. Skipping access creation and email.`);
+      return new Response(
+        JSON.stringify({
+          success: true,
+          message: `Payment status is '${paymentStatus}'. Skipping access creation.`,
+        }),
+        {
+          status: 200,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
     // Extract email and name using multi-gateway fallback
     const email = (
       body.Customer?.email || 

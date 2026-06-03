@@ -6,6 +6,9 @@ export type Material = {
   cover: string;
   type: 'main' | 'bonus';
   tag?: string;
+  pdfUrl?: string;
+  images?: string[];
+  mediaType?: 'pdf' | 'images' | 'calculator';
 };
 
 export const MAIN_MATERIALS: Material[] = [
@@ -17,6 +20,8 @@ export const MAIN_MATERIALS: Material[] = [
     cover: '/imgs/1.webp',
     type: 'main',
     tag: 'Introdução',
+    pdfUrl: '/entregaveis/MÓDULO 1 O INÍCIO LUCRATIVO.pdf',
+    mediaType: 'pdf'
   },
   {
     id: 'mod-2',
@@ -26,6 +31,8 @@ export const MAIN_MATERIALS: Material[] = [
     cover: '/imgs/2.webp',
     type: 'main',
     tag: 'Receitas',
+    pdfUrl: '/entregaveis/MÓDULO 2 MASSAS E ESTRUTURA.pdf',
+    mediaType: 'pdf'
   },
   {
     id: 'mod-3',
@@ -35,6 +42,8 @@ export const MAIN_MATERIALS: Material[] = [
     cover: '/imgs/3.webp',
     type: 'main',
     tag: 'Técnicas',
+    pdfUrl: '/entregaveis/MÓDULO 3 RECHEIOS E CALDAS.pdf',
+    mediaType: 'pdf'
   },
   {
     id: 'mod-4',
@@ -44,6 +53,8 @@ export const MAIN_MATERIALS: Material[] = [
     cover: '/imgs/4.webp',
     type: 'main',
     tag: 'Negócio',
+    pdfUrl: '/entregaveis/MÓDULO 4 MONTAGEM E PRODUÇÃO.pdf',
+    mediaType: 'pdf'
   },
   {
     id: 'mod-5',
@@ -53,15 +64,8 @@ export const MAIN_MATERIALS: Material[] = [
     cover: '/imgs/5.webp',
     type: 'main',
     tag: 'Marketing',
-  },
-  {
-    id: 'mod-6',
-    title: 'Módulo 6: Empreendendo em Casa',
-    description: 'Como montar sua mini-confeitaria, legalizar e escalar o negócio.',
-    duration: '50 min',
-    cover: '/imgs/6.webp',
-    type: 'main',
-    tag: 'Empreender',
+    pdfUrl: '/entregaveis/MÓDULO 5 MARKETING E VENDAS.pdf',
+    mediaType: 'pdf'
   },
 ];
 
@@ -74,6 +78,19 @@ export const BONUS_MATERIALS: Material[] = [
     cover: '/imgs/7.webp',
     type: 'bonus',
     tag: 'Bônus',
+    mediaType: 'images',
+    images: [
+      '/entregaveis/+10 Modelos de Posts Prontos/arte1.png',
+      '/entregaveis/+10 Modelos de Posts Prontos/arte2.png',
+      '/entregaveis/+10 Modelos de Posts Prontos/arte3.png',
+      '/entregaveis/+10 Modelos de Posts Prontos/arte4.png',
+      '/entregaveis/+10 Modelos de Posts Prontos/arte5.png',
+      '/entregaveis/+10 Modelos de Posts Prontos/arte6.png',
+      '/entregaveis/+10 Modelos de Posts Prontos/arte7.png',
+      '/entregaveis/+10 Modelos de Posts Prontos/arte8.png',
+      '/entregaveis/+10 Modelos de Posts Prontos/arte9.png',
+      '/entregaveis/+10 Modelos de Posts Prontos/arte10.png'
+    ]
   },
   {
     id: 'bonus-2',
@@ -83,6 +100,7 @@ export const BONUS_MATERIALS: Material[] = [
     cover: '/imgs/8.webp',
     type: 'bonus',
     tag: 'Bônus',
+    mediaType: 'calculator'
   },
   {
     id: 'bonus-3',
@@ -92,6 +110,8 @@ export const BONUS_MATERIALS: Material[] = [
     cover: '/imgs/9.webp',
     type: 'bonus',
     tag: 'Bônus',
+    pdfUrl: '/entregaveis/BÔNUS 2 GUIA DE EMBALAGENS LUCRATIVAS.pdf',
+    mediaType: 'pdf'
   },
   {
     id: 'bonus-4',
@@ -101,6 +121,12 @@ export const BONUS_MATERIALS: Material[] = [
     cover: '/imgs/10.webp',
     type: 'bonus',
     tag: 'Bônus',
+    mediaType: 'images',
+    images: [
+      '/entregaveis/Design Comercial e Etiquetas/adesivo1.png',
+      '/entregaveis/Design Comercial e Etiquetas/adesivo2.png',
+      '/entregaveis/Design Comercial e Etiquetas/adesivo3.png'
+    ]
   },
   {
     id: 'bonus-5',
@@ -110,6 +136,8 @@ export const BONUS_MATERIALS: Material[] = [
     cover: '/imgs/11.webp',
     type: 'bonus',
     tag: 'Bônus',
+    pdfUrl: '/entregaveis/BÔNUS 1 APOSTILA COM 15 RECHEIOS EXTRAS.pdf',
+    mediaType: 'pdf'
   },
 ];
 

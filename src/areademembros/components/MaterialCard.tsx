@@ -1,5 +1,5 @@
 import React from 'react';
-import { CheckCircle2, Circle, Clock, Tag, FileText } from 'lucide-react';
+import { CheckCircle2, Circle, Clock, Tag, FileText, Image as ImageIcon, Calculator } from 'lucide-react';
 import type { Material } from '../data/materials';
 
 interface MaterialCardProps {
@@ -30,7 +30,7 @@ export const MaterialCard: React.FC<MaterialCardProps> = ({ material, isViewed, 
           {/* Hover overlay */}
           <div className="absolute inset-0 bg-[#4E2A1E]/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300">
             <span className="bg-[#F4C95D] text-[#4E2A1E] text-xs font-black px-3 py-1.5 rounded-xl shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-              Acessar Material
+              {material.mediaType === 'images' ? 'Ver Imagens' : material.mediaType === 'calculator' ? 'Calcular Custos' : 'Acessar Material'}
             </span>
           </div>
 
@@ -91,13 +91,27 @@ export const MaterialCard: React.FC<MaterialCardProps> = ({ material, isViewed, 
           </button>
         </div>
 
-        {/* Primary PDF view button */}
+        {/* Primary view button */}
         <button
           onClick={() => onOpen(material)}
           className="w-full flex items-center justify-center space-x-1.5 bg-[#4E2A1E] hover:bg-[#3d2018] text-[#F4C95D] py-2 px-3 rounded-xl text-[11px] font-sans font-black shadow-sm transition-all active:scale-[0.98]"
         >
-          <FileText className="w-3.5 h-3.5" />
-          <span>Acessar Material</span>
+          {material.mediaType === 'images' ? (
+            <>
+              <ImageIcon className="w-3.5 h-3.5" />
+              <span>Ver Imagens / Baixar</span>
+            </>
+          ) : material.mediaType === 'calculator' ? (
+            <>
+              <Calculator className="w-3.5 h-3.5" />
+              <span>Abrir Calculadora</span>
+            </>
+          ) : (
+            <>
+              <FileText className="w-3.5 h-3.5" />
+              <span>Acessar Material</span>
+            </>
+          )}
         </button>
       </div>
     </div>

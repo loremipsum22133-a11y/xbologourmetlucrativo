@@ -1101,7 +1101,7 @@ export default function App() {
                   R$ 97,90
                 </span>
                 <span className="text-3xl font-sans font-black text-brand-brown leading-none tracking-tight">
-                  R$ 32,90
+                  R$ 37,90
                 </span>
                 <span className="text-xs text-brand-brown/70 font-bold font-sans">
                   Pagamento único
@@ -1109,7 +1109,7 @@ export default function App() {
               </div>
 
               <div className="bg-brand-yellow/20 text-brand-brown border border-brand-brown/10 text-xs font-bold px-3.5 py-1 rounded-full inline-block mt-2 uppercase tracking-wide">
-                🔥 ECONOMIZE R$ 70,00
+                🔥 ECONOMIZE R$ 60,00
               </div>
             </div>
 

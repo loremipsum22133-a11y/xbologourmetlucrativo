@@ -8,6 +8,7 @@ import { MaterialCard } from './components/MaterialCard';
 import { Certificate } from './Certificate';
 import { ALL_MATERIALS, MAIN_MATERIALS, BONUS_MATERIALS } from './data/materials';
 import { PdfModal } from './components/PdfModal';
+import { ImageGalleryModal } from './components/ImageGalleryModal';
 import { CostCalculator } from './components/CostCalculator';
 import confetti from 'canvas-confetti';
 
@@ -36,11 +37,17 @@ export const Dashboard: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [pdfOpen, setPdfOpen] = useState(false);
   const [selectedPdfTitle, setSelectedPdfTitle] = useState('');
+  const [selectedPdfUrl, setSelectedPdfUrl] = useState<string | undefined>(undefined);
+  const [imagesOpen, setImagesOpen] = useState(false);
+  const [selectedImages, setSelectedImages] = useState<string[]>([]);
+  const [selectedImagesTitle, setSelectedImagesTitle] = useState('');
 
   const [viewedIds, setViewedIds] = useState<string[]>(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
-      return stored ? JSON.parse(stored) : [];
+      const parsed: string[] = stored ? JSON.parse(stored) : [];
+      const validIds = ALL_MATERIALS.map(m => m.id);
+      return parsed.filter(id => validIds.includes(id));
     } catch {
       return [];
     }
@@ -93,9 +100,19 @@ export const Dashboard: React.FC = () => {
     );
   };
 
-  const handleOpenPdf = (material: typeof ALL_MATERIALS[0]) => {
-    setSelectedPdfTitle(material.title);
-    setPdfOpen(true);
+  const handleOpenMaterial = (material: typeof ALL_MATERIALS[0]) => {
+    if (material.mediaType === 'calculator') {
+      setActiveTab('calculadora');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (material.mediaType === 'images') {
+      setSelectedImagesTitle(material.title);
+      setSelectedImages(material.images || []);
+      setImagesOpen(true);
+    } else {
+      setSelectedPdfTitle(material.title);
+      setSelectedPdfUrl(material.pdfUrl);
+      setPdfOpen(true);
+    }
   };
 
   const filteredMain = filterMaterials(MAIN_MATERIALS);
@@ -155,7 +172,7 @@ export const Dashboard: React.FC = () => {
                     material={m}
                     isViewed={viewedIds.includes(m.id)}
                     onToggleViewed={toggleViewed}
-                    onOpen={handleOpenPdf}
+                    onOpen={handleOpenMaterial}
                   />
                 ))}
               </div>
@@ -227,7 +244,7 @@ export const Dashboard: React.FC = () => {
                         material={m}
                         isViewed={viewedIds.includes(m.id)}
                         onToggleViewed={toggleViewed}
-                        onOpen={handleOpenPdf}
+                        onOpen={handleOpenMaterial}
                       />
                     ))}
                   </div>
@@ -251,7 +268,7 @@ export const Dashboard: React.FC = () => {
                         material={m}
                         isViewed={viewedIds.includes(m.id)}
                         onToggleViewed={toggleViewed}
-                        onOpen={handleOpenPdf}
+                        onOpen={handleOpenMaterial}
                       />
                     ))}
                   </div>
@@ -280,6 +297,15 @@ export const Dashboard: React.FC = () => {
         isOpen={pdfOpen}
         onClose={() => setPdfOpen(false)}
         title={selectedPdfTitle}
+        pdfUrl={selectedPdfUrl}
+      />
+
+      {/* Image Gallery Modal */}
+      <ImageGalleryModal
+        isOpen={imagesOpen}
+        onClose={() => setImagesOpen(false)}
+        title={selectedImagesTitle}
+        images={selectedImages}
       />
     </div>
   );

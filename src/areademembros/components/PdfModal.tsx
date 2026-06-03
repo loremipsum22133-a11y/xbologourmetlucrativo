@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { X, Download, ZoomIn, ZoomOut, Maximize2, Minimize2, ChevronLeft, ChevronRight, FileText } from 'lucide-react';
+import { X, Download, ZoomIn, ZoomOut, Maximize2, Minimize2, ChevronLeft, ChevronRight, FileText, Eye } from 'lucide-react';
+
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
 interface PdfModalProps {
   isOpen: boolean;
@@ -174,11 +176,44 @@ export const PdfModal: React.FC<PdfModalProps> = ({ isOpen, onClose, title, pdfU
           >
             {/* Real PDF or beautiful PDF mockup reader */}
             {pdfUrl ? (
-              <iframe 
-                src={`${pdfUrl}#toolbar=0`} 
-                className="w-full h-full border-none rounded-sm"
-                title={title}
-              />
+              isMobile ? (
+                <div className="w-full h-full flex flex-col items-center justify-center text-center p-6 space-y-6 bg-[#F5F1EA] text-[#4E2A1E]">
+                  <div className="w-20 h-20 bg-[#F4C95D]/20 rounded-full flex items-center justify-center text-[#F4C95D] animate-bounce my-2">
+                    <FileText className="w-10 h-10 text-[#4E2A1E]" />
+                  </div>
+                  <div className="space-y-2">
+                    <h3 className="text-base font-serif font-black text-[#4E2A1E] px-4">{title}</h3>
+                    <p className="text-xs text-[#4E2A1E]/70 max-w-xs mx-auto leading-relaxed">
+                      Para ler este material no seu celular, abra o arquivo em uma nova aba ou faça o download direto.
+                    </p>
+                  </div>
+                  <div className="flex flex-col space-y-3 w-full items-center">
+                    <a
+                      href={pdfUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center space-x-2 bg-[#4E2A1E] hover:bg-[#3d2018] text-[#F4C95D] px-6 py-3 rounded-xl font-bold text-xs shadow-md transition-all active:scale-95 w-full max-w-[200px]"
+                    >
+                      <Eye className="w-4 h-4" />
+                      <span>Visualizar PDF</span>
+                    </a>
+                    <a
+                      href={pdfUrl}
+                      download
+                      className="flex items-center justify-center space-x-2 bg-[#F4C95D] hover:bg-[#e0b850] text-[#4E2A1E] px-6 py-3 rounded-xl font-bold text-xs shadow-md transition-all active:scale-95 w-full max-w-[200px]"
+                    >
+                      <Download className="w-4 h-4" />
+                      <span>Baixar PDF</span>
+                    </a>
+                  </div>
+                </div>
+              ) : (
+                <iframe 
+                  src={`${pdfUrl}#toolbar=0`} 
+                  className="w-full h-full border-none rounded-sm"
+                  title={title}
+                />
+              )
             ) : (
               <div className="w-full h-full flex flex-col justify-between">
                 {/* Simulated PDF Header */}
